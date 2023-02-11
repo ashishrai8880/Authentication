@@ -1,0 +1,16 @@
+config:
+  target: "http://localhost:3000/api/v1/tabdata"
+  phases:
+    - duration: 1
+      arrivalRate: 50
+  
+scenarios:
+  - flow:
+      - get:
+          url: "/tabs"
+          headers:
+            Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIiLCJzdWIiOiJfQWNjZXNzVG9rZW4iLCJpc3MiOiIiLCJhdXRoSWQiOiI2M2QzOTZhMDIxODJiNDI5ZTRjMjZhNDIiLCJpYXQiOjE2NzQ4MTExOTYsImV4cCI6MTczNDgxMTE5Nn0.DHnslGduBD0htFKhXqMFI2cPyyPEXgkEKCoDaJGgNh0Eo979SG2MFCF7gWEJbq84nRYQSDP42f3zsRGqymALUQ"
+            Catlogue: "60508372dabf5464540a2460"
+            Platform: "web"
+            Accept-Language : "en"
+            Country : "IN"

@@ -1,0 +1,12 @@
+doctype html
+html
+    head
+        style
+            include ./style.pug
+    body
+        div(style='background-color:#211f2c;')
+            include ./header.pug
+            block content
+            //- section
+            //-     h2 This h2 is also from the layout
+            include ./footer.pug

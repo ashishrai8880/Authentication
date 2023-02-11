@@ -1,0 +1,1001 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Rest API Starter Explorer
+  description: A proposed openAPI explorer for Rest Api Starter Template
+schemes:
+  - http
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+tags:
+  - name: Auth
+    description: Authentication and authorization operations
+  - name: User
+    description: Routes related to End User
+  - name: Tabs
+    description: Routes related to Tabs Data
+  - name: Asset
+    description: Routes related to Asset Data
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+paths:
+  /auth/checkuser:
+    post:
+      tags:
+        - Auth
+      summary: Check User
+      description: Check user with username.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com/9889xxxxxx
+      responses:
+        "200":
+          description: User Exist.
+        "400":
+          description: Username is required.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error.
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Create a new User
+      description: Create a new user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  required: true
+                  example: email/mobile
+                email:
+                  type: string
+                  required: true
+                  example: user@email.com
+                password:
+                  type: string
+                  example: Password@123
+                age:
+                  type: string
+                  example: 16-10-1980
+                catalogue_id:
+                  type: string
+                  required: true
+                  example: 5f48bc1eb9124f41a16c5712
+                device_id:
+                  type: string
+                  required: true
+                  example: 5f48bc1eb9124f41a16c5712
+                country:
+                  type: string
+                  required: true
+                  example: India
+                platform:
+                  type: string
+                  required: true
+                  example: web
+                device_token:
+                  type: string
+                  required: true
+                  example: 123456789
+                os_version:
+                  type: string
+                  required: true
+                  example: windows 10
+      responses:
+        "201":
+          description: An OTP has been sent to..
+        "400":
+          description: Failed to register.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /auth/resend/otp:
+    post:
+      tags:
+        - Auth
+      summary: Resend OTP
+      description: User Resend OTP.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com/9889xxxxxx
+                otp_type:
+                  type: string
+                  required: true
+                  example: acc_verification/login_otp/pwd_reset
+      responses:
+        "200":
+          description: An OTP has been resent.
+        "400":
+          description: Username/OTP Type is required.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error.
+  /auth/verify/otp:
+    post:
+      tags:
+        - Auth
+      summary: OTP Verify
+      description: OTP Verification.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+                otp:
+                  type: string
+                  example: 123
+      responses:
+        "200":
+          description: OTP has been verified successfully.
+        "400":
+          description: Incorrect OTP. Please try again.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login a user
+      description: Login a user using email and password.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+                password:
+                  type: string
+                  example: Password@123
+      responses:
+        "200":
+          description: You have successfully logged in.
+        "400":
+          description: Login failed.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /auth/password/forgot:
+    post:
+      tags:
+        - Auth
+      summary: Reset user password
+      description: Reset user password using with OTP
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+      responses:
+        "200":
+          description: An OTP has been sent.
+        "400":
+          description: Your account is blocked for OTP service. Please go back and try again after 1 hour or Contact for support.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /auth/password/forgot/newpassword:
+    put:
+      tags:
+        - Auth
+      summary: Reset user password with new password
+      description: Reset user password using with new password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+                password:
+                  type: string
+                  required: true
+                  example: Password@123
+                confirm_password:
+                  type: string
+                  required: true
+                  example: Password@123
+      responses:
+        "200":
+          description: Your password has been reset, please login now.
+        "400":
+          description: Your password has not change.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /auth/login/otp:
+    post:
+      tags:
+        - Auth
+      summary: Login with OTP
+      description: Login a user using OTP.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+      responses:
+        "200":
+          description: An OTP has been sent..
+        "400":
+          description: An OTP has not able to sent.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /auth/login/verifyotp:
+    post:
+      tags:
+        - Auth
+      summary: OTP Verify
+      description: OTP Verification for login.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+                otp:
+                  type: string
+                  example: 123
+      responses:
+        "200":
+          description: OTP has been verified successfully.
+        "400":
+          description: Incorrect OTP. Please try again.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  
+  /user/logout:
+    post:
+      tags:
+        - User
+      summary: Logout a user
+      description: logout a user using username.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+      responses:
+        "200":
+          description: Logout Successfully.
+        "400":
+          description: Unable to Logout.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /user/password/change:
+    put:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Update password
+      description: Update password with Old password and create new password
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                  example: user@email.com
+                current_password:
+                  type: string
+                  required: true
+                  example: Password@123
+                password:
+                  type: string
+                  required: true
+                  example: Password@123
+                confirm_password:
+                  type: string
+                  required: true
+                  example: Password@123
+      responses:
+        "200":
+          description: Your password has been changed.
+        "400":
+          description: You have entered an incorrect password.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /user/addprofile:
+    post:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Add New Account
+      description: Add New Account in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _userId:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+                profile_name:
+                  type: string
+                  required: true
+                  example: Test
+                is_child:
+                  type: Boolean
+                  required: true
+                  example: false
+                viewing_restriction:
+                  type: string
+                  required: false
+                  example: U/A 16+
+      responses:
+        "200":
+          description: Account has been created.
+        "400":
+          description: Account has not create.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /user/updateprofile/id:
+    put:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Update Account
+      description: Update Account in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile_id:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+                profile_name:
+                  type: string
+                  example: Test  
+                is_child:
+                  type: Boolean
+                  required: true
+                  example: false
+                viewing_restriction:
+                  type: string
+                  required: false
+                  example: U/A 16+              
+      responses:
+        "200":
+          description: Account Profile has been updated.
+        "400":
+          description: Account Profile has not update.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /user/profile:
+    post:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Get All Accounts
+      description: Get All Accounts in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _userId:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+      responses:
+        "200":
+          description: All Account has been fetched.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error.
+  /user/profile/id:
+    post:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Get single account details
+      description: Get single account details in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile_id:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+      responses:
+        "200":
+          description: Account details has been fetced.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /user/profile/delete/id:
+    delete:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Delete single account
+      description: Delete single account in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile_id:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+      responses:
+        "200":
+          description: Account has been Deleted.
+        "400":
+          description: It is a master Account. We Will not able to delete.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error
+  /user/profile/setting:
+    post:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Get All Setting
+      description: Get All Setting in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _userId:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+      responses:
+        "200":
+          description: Account Profile Setting has been fetced.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error.
+  /user/profile/updatesetting/id:
+    put:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Update Profile Setting
+      description: Update Profile Setting in Profile Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile_id:
+                  type: string
+                  required: true
+                  example: 633bd0a67e2b870de0cdc373
+                language:
+                  type: Array
+                  example: ["en","hi","fr"]
+                is_child:
+                  type: Boolean
+                  example: false
+                viewing_restriction:
+                  type: string
+                  example: A
+                profile_lock:
+                  type: Boolean
+                  example: true
+                profile_password:
+                  type: string
+                  example: password
+      responses:
+        "200":
+          description: Profile Setting has been updated.
+        "400":
+          description: Account Profile has not update.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error.
+  /user/account/updatesetting/id:
+    put:
+      security:
+        - bearerAuth: []  
+      tags:
+        - User
+      summary: Update Account Setting
+      description: Update Account Setting in Setting Section
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  required: true
+                  example: 63440923b105495968932bcc
+                settingId:
+                  type: string
+                  required: true
+                  example: 63440923b105495968932bcd
+                wifi:
+                  type: Boolean
+                  example: true
+                download_next_episode:
+                  type: Boolean
+                  example: true
+                video_quality:
+                  type: String
+                  example: SD
+                
+      responses:
+        "200":
+          description: Account Setting has been updated.
+        "400":
+          description: Account Setting has not update.
+        "404":
+          description: User doesn't exists.
+        "500":
+          description: Internal Server Error.
+  
+  /tabdata/tabs:
+    get:
+      tags:
+        - Tabs
+      summary: Get Tab Details
+      description: Getting all details of Tabs.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Catlogue
+          type: string
+          required: true
+        - in: header
+          name: Platform
+          type: string
+          required: true
+        - in: header
+          name: Accept-Language
+          type: string
+          required: true
+        - in: header
+          name: Country
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Tab Data get successfully.
+        "400":
+          description: Bad Request.
+        "404":
+          description: Not found.
+        "500":
+          description: Internal Server Error
+  /tabdata/banner:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Tabs
+      summary: Get Tab Banner Details
+      description: Getting all details of Tab Banner.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:        
+        - in: header
+          name: Catlogue
+          type: string
+          required: true
+        - in: header
+          name: Platform
+          type: string
+          required: true
+        - in: header
+          name: Accept-Language
+          type: string
+          required: true
+        - in: header
+          name: Country
+          type: string
+          required: true
+        - in: header
+          name: Profile_Id
+          type: string
+        - in: query
+          name: slug
+          type: string
+          required: true
+          
+      responses:
+        "200":
+          description: Tab Banner Data get successfully.
+        "400":
+          description: Bad Request.
+        "404":
+          description: Not found.
+        "500":
+          description: Internal Server Error
+  /tabdata/list:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Tabs
+      summary: Get Tab List Details
+      description: Getting all details of Tab List.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Catlogue
+          type: string
+          required: true
+        - in: header
+          name: Platform
+          type: string
+          required: true
+        - in: header
+          name: Accept-Language
+          type: string
+          required: true
+        - in: header
+          name: Country
+          type: string
+          required: true
+        - in: header
+          name: Profile_Id
+          type: string
+        - in: query
+          name: slug
+          type: string
+          required: true
+        - in: query
+          name: page
+          type: string
+        - in: query
+          name: size
+          type: string
+        - in: path
+          name: category_id
+          type: string
+        - in: path
+          name: sub_category_id
+          type: string
+        - in: path
+          name: sub_sub_category_id
+          type: string
+          
+          
+      responses:
+        "200":
+          description: Tab List Data get successfully.
+        "400":
+          description: Bad Request.
+        "404":
+          description: Not found.
+        "500":
+          description: Internal Server Error
+
+  /assetdetail:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Asset
+      summary: Get Tab List Details
+      description: Getting all details of Tab List.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Catlogue
+          type: string
+          required: true
+        - in: header
+          name: Platform
+          type: string
+          required: true
+        - in: header
+          name: Accept-Language
+          type: string
+          required: true
+        - in: header
+          name: Country
+          type: string
+          required: true
+        - in: header
+          name: Profile_Id
+          type: string
+          required: true
+        - in: query
+          name: type
+          type: string
+          required: true
+        - in: query
+          name: code
+          type: string
+          required: true
+          
+          
+      responses:
+        "200":
+          description: Tab List Data get successfully.
+        "400":
+          description: Bad Request.
+        "404":
+          description: Not found.
+        "500":
+          description: Internal Server Error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+        age:
+          type: integer
+        knownLanguages:
+          type: string
+        profession:
+          type: string
+        location:
+          type: string
+        latitude:
+          type: integer
+        longitude:
+          type: integer
+        photoUrl:
+          type: string
+        symptoms:
+          type: string
+      required:
+        - userId
+        - email
+    Auth:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        admin:
+          type: boolean
+        adminVerified:
+          type: boolean
+        disabled:
+          type: boolean
+        emailVerified:
+          type: boolean
+        provider:
+          type: boolean
+        oauthToken:
+          type: string
+      required:
+        - email
+    Token:
+      type: object
+      properties:
+        _userId:
+          type: string
+        token:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - _userId
+        - token
+        - createdAt
